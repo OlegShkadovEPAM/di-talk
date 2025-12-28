@@ -11,7 +11,11 @@ public class Resolver
 
     public T Get<T>()
     {
-        return (T)GetInternal(typeof(T));
+        var instance = (T)GetInternal(typeof(T));
+
+        _container.ResetScoped();
+
+        return instance;
     }
 
     private object GetInternal(Type type)
@@ -26,8 +30,8 @@ public class Resolver
         var parameters = InstantiateParameters(type);
         var instance = Activator.CreateInstance(type, parameters);
 
-        // Save instance for future use if singleton
-        if (dependency.Scope == Scopes.Singleton)
+        // Save instance for future use if singleton or scoped
+        if (dependency.Scope != Scopes.Transient)
         {
             dependency.Instance = instance;
         }

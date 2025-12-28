@@ -11,7 +11,7 @@ public class Program
         container.AddTransient<HelloService>();
         container.AddTransient<WorldService>();
 
-        container.AddSingleton<Logger>();
+        container.AddScoped<Logger>();
 
         var resolver = new Resolver(container);
 

@@ -23,4 +23,14 @@ public class Container
     {
         return _collection[type];
     }
+
+    public void ResetScoped()
+    {
+        foreach (var dependency in _collection
+            .Select(x => x.Value)
+            .Where(x => x.Scope == Scopes.Scoped))
+        {
+            dependency.Instance = null;
+        }
+    }
 }
