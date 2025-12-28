@@ -4,18 +4,23 @@ public class Resolver
 {
     public T Get<T>()
     {
+        return (T)GetInternal(typeof(T));
+    }
+
+    private static object GetInternal(Type type)
+    {
         // Get constructor parameters
-        var constructor = typeof(T).GetConstructors().Single();
+        var constructor = type.GetConstructors().Single();
         var parameterInfo = constructor.GetParameters();
 
         // Instantiate the parameters
         var parameters = new object[parameterInfo.Length];
         for (int i = 0; i < parameters.Length; i++)
         {
-            parameters[i] = Activator.CreateInstance(
+            parameters[i] = GetInternal(
                 parameterInfo[i].ParameterType);
         }
 
-        return (T)Activator.CreateInstance(typeof(T), parameters);
+        return Activator.CreateInstance(type, parameters);
     }
 }
