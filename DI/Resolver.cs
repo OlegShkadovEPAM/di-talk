@@ -9,6 +9,13 @@ public class Resolver
 
     private static object GetInternal(Type type)
     {
+        var parameters = InstantiateParameters(type);
+
+        return Activator.CreateInstance(type, parameters);
+    }
+
+    private static object[] InstantiateParameters(Type type)
+    {
         // Get constructor parameters
         var constructor = type.GetConstructors().Single();
         var parameterInfo = constructor.GetParameters();
@@ -21,6 +28,6 @@ public class Resolver
                 parameterInfo[i].ParameterType);
         }
 
-        return Activator.CreateInstance(type, parameters);
+        return parameters;
     }
 }
