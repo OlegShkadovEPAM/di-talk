@@ -2,8 +2,15 @@
 
 public class GreetingsService
 {
+    private readonly PrintService _printService;
+
+    public GreetingsService(PrintService printService)
+    {
+        _printService = printService;
+    }
+
     public void Greet()
     {
-        Console.WriteLine("Hello, World!");
+        _printService.Print("Hello, World!");
     }
 }
