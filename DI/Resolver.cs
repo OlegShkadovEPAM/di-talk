@@ -2,19 +2,40 @@
 
 public class Resolver
 {
+    private readonly Container _container;
+
+    public Resolver(Container container)
+    {
+        _container = container;
+    }
+
     public T Get<T>()
     {
         return (T)GetInternal(typeof(T));
     }
 
-    private static object GetInternal(Type type)
+    private object GetInternal(Type type)
     {
-        var parameters = InstantiateParameters(type);
+        // Check if the parameter is already instantiated
+        var dependency = _container.Get(type);
+        if (dependency.Instance != null)
+        {
+            return dependency.Instance;
+        }
 
-        return Activator.CreateInstance(type, parameters);
+        var parameters = InstantiateParameters(type);
+        var instance = Activator.CreateInstance(type, parameters);
+
+        // Save instance for future use if singleton
+        if (dependency.Scope == Scopes.Singleton)
+        {
+            dependency.Instance = instance;
+        }
+
+        return instance;
     }
 
-    private static object[] InstantiateParameters(Type type)
+    private object[] InstantiateParameters(Type type)
     {
         // Get constructor parameters
         var constructor = type.GetConstructors().Single();
