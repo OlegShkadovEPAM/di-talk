@@ -13,6 +13,7 @@ public class Resolver
     {
         var instance = (T)GetInternal(typeof(T));
 
+        // Step 5: reset scoped
         _container.ResetScoped();
 
         return instance;
@@ -20,17 +21,20 @@ public class Resolver
 
     private object GetInternal(Type type)
     {
-        // Check if the parameter is already instantiated
+        // Step 1: check if the parameter is already instantiated
         var dependency = _container.Get(type);
         if (dependency.Instance != null)
         {
             return dependency.Instance;
         }
 
+        // Step 2: get parameters 
         var parameters = InstantiateParameters(type);
+
+        // Step 3: create instance
         var instance = Activator.CreateInstance(type, parameters);
 
-        // Save instance for future use if singleton or scoped
+        // Step 4: save instance for future use if singleton or scoped
         if (dependency.Scope != Scopes.Transient)
         {
             dependency.Instance = instance;
